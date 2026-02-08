@@ -205,3 +205,21 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# --- Custom Phishing Project Settings ---
+
+# Ignore raw datasets in the 'model' folder
+model/datasets/*.csv
+model/datasets/*.bz2
+model/datasets/*.zip
+
+# Ignore trained LightGBM models (keep these local or in cloud storage)
+model/notebooks/*.pkl
+model/notebooks/*.model
+backend/models/*.pkl
+
+# --- Next.js Frontend ---
+node_modules/
+.next/
+out/
+build/
