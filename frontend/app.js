@@ -224,14 +224,59 @@ function generateResults(analysisData) {
     showShapContributions(analysisData.hybrid_report.local_ml_engine.feature_impacts);
 }
 
+const featureExplanations = {
+    "URLLength": "Excessive link length used to hide destination.",
+    "URLSimilarityIndex": "Strong resemblance to a known brand name.",
+    "CharContinuationRate": "Repetitive character patterns often found in scams.",
+    "TLDLegitimateProb": "Use of an untrustworthy or rare website ending.",
+    "URLCharProb": "Use of unusual character sequences.",
+    "TLDLength": "Non-standard length of the website extension.",
+    "NoOfSubDomain": "Confusing number of website sub-sections.",
+    "HasObfuscation": "Link contains hidden or scrambled text.",
+    "NoOfObfuscatedChar": "High count of scrambled characters.",
+    "ObfuscationRatio": "Large portion of the link is obscured.",
+    "LetterRatioInURL": "Atypical balance of letters in the address.",
+    "NoOfDegitsInURL": "High number of digits instead of words.",
+    "DegitRatioInURL": "High percentage of numbers in the link.",
+    "NoOfEqualsInURL": "Tracking markers used to capture user data.",
+    "NoOfQMarkInURL": "Hidden data-transfer commands detected.",
+    "NoOfAmpersandInURL": "Multiple background actions tied to the link.",
+    "NoOfOtherSpecialCharsInURL": "Unusual density of symbols.",
+    "SpacialCharRatioInURL": "High ratio of symbols compared to text.",
+    "IsHTTPS": "Absence of standard security encryption.",
+    "IsDomainIP": "Uses a raw numeric address instead of a name.",
+    "DomainLength": "Unusual length of the main site name."
+};
+
 function showShapContributions(contributions) {
     const shapSection = document.getElementById('shapSection');
     const shapList = document.getElementById('shapList');
     shapList.innerHTML = '';
+
     if (contributions && Object.keys(contributions).length) {
-        Object.entries(contributions).forEach(([feature, value]) => {
+        // Sort features by their impact (absolute value) so most important are first
+        const sortedFeatures = Object.entries(contributions)
+            .sort(([, a], [, b]) => Math.abs(b) - Math.abs(a))
+            .slice(0, 5); // Show only the top 5 most important factors
+
+        sortedFeatures.forEach(([feature, value]) => {
             const li = document.createElement('li');
-            li.textContent = `${feature}: ${value}`;
+            li.className = "mb-4 list-none p-4 rounded-lg border border-[#00e5ff1a] bg-[#0c162a99]";
+            
+            // Determine if the feature helped the "Malicious" or "Safe" verdict
+            const impactType = value > 0 ? "⚠️ Risk Factor" : "✅ Security Factor";
+            const impactColor = value > 0 ? "text-[#ff5252]" : "text-[#00e676]";
+            
+            // Get human-readable text or fallback to the technical name
+            const explanation = featureExplanations[feature] || `Technical pattern detected: ${feature}`;
+
+            li.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-bold uppercase tracking-widest ${impactColor}">${impactType}</span>
+                    <span class="text-[10px] opacity-50">${Math.abs(Math.round(value * 100))}% Impact</span>
+                </div>
+                <p class="text-sm text-[#e4eaf5]">${explanation}</p>
+            `;
             shapList.appendChild(li);
         });
         shapSection.classList.remove('hidden');

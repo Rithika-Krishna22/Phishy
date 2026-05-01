@@ -482,3 +482,25 @@ body {
         padding: 10px 16px;
     }
 }
+/* Ensure the results list allows content to be seen */
+#shapList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    overflow: visible; /* Changed from hidden */
+}
+
+/* Make sure the text color isn't blending into the background */
+.result-item {
+    position: relative;
+    z-index: 20; /* Bring it to the front */
+    overflow: visible; 
+}
+
+/* Ensure the impact text is bright enough to see */
+.impact-label {
+    color: var(--silver); /* Use the silver variable for better contrast */
+    font-size: 10px;
+    opacity: 0.8;
+}
