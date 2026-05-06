@@ -318,7 +318,7 @@ function populateFindings(analysisData) {
 }
 
 async function analyzeURL(url) {
-    const backendURL = 'http://localhost:8000/analyze';
+    const backendURL = 'https://aegis-bpfp.onrender.com/analyze';
     try {
         const response = await fetch(backendURL, {
             method: 'POST',
